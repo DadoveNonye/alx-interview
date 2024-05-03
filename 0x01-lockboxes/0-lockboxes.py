@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 def canUnlockAll(boxes):
   """
   This function determines if all boxes can be opened given a list of lists representing keys in each box.
