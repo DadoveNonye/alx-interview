@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+"""
+Parses a line in the expected format and extracts file size.
+
+"""
 from collections import defaultdict
 
 def parse_line(line):
