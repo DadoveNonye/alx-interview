@@ -1,4 +1,9 @@
 #!/usr/bin/python3
+"""
+Main file for testing
+
+This script tests the validUTF8 function from the 0-validate_utf8.py module.
+"""
 def validUTF8(data):
   """
   Checks if the given data represents a valid UTF-8 encoding.
