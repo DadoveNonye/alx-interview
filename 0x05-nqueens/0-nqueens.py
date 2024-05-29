@@ -4,96 +4,81 @@ import sys
 solves the N queens puzzle
 """
 
-def is_safe(board, row, col, N):
+def is_safe(board, row, col):
     """
     Check if it's safe to place a queen at board[row][col].
-
-    Args:
-        board (list): The current state of the board.
-        row (int): The row index to check.
-        col (int): The column index to check.
-        N (int): The size of the board (N x N).
-
+    
+    Parameters:
+    board (list): The current state of the board.
+    row (int): The row index where the queen is to be placed.
+    col (int): The column index where the queen is to be placed.
+    
     Returns:
-        bool: True if it's safe to place the queen, False otherwise.
+    bool: True if it's safe to place the queen, False otherwise.
     """
-    for i in range(col):
-        if board[row][i] == 1:
+    for i in range(row):
+        if board[i] == col or \
+           board[i] - i == col - row or \
+           board[i] + i == col + row:
             return False
-
-    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
-        if board[i][j] == 1:
-            return False
-
-    for i, j in zip(range(row, N, 1), range(col, -1, -1)):
-        if board[i][j] == 1:
-            return False
-
     return True
 
-def solve_nqueens_util(board, col, N, solutions):
+def solve_nqueens_util(board, row, n, solutions):
     """
-    Utilize backtracking to solve the N queens problem.
-
-    Args:
-        board (list): The current state of the board.
-        col (int): The current column index to place the queen.
-        N (int): The size of the board (N x N).
-        solutions (list): A list to store all the valid solutions.
-
-    Returns:
-        bool: True if a solution is found, False otherwise.
+    Utilize backtracking to solve the N-Queens problem.
+    
+    Parameters:
+    board (list): The current state of the board.
+    row (int): The current row index to place the queen.
+    n (int): The size of the board (n x n).
+    solutions (list): A list to store the solutions.
     """
-    if col >= N:
-        solution = []
-        for i in range(N):
-            for j in range(N):
-                if board[i][j] == 1:
-                    solution.append([i, j])
+    if row == n:
+        solution = [[i, board[i]] for i in range(n)]
         solutions.append(solution)
-        return True
+        return
 
-    res = False
-    for i in range(N):
-        if is_safe(board, i, col, N):
-            board[i][col] = 1
-            res = solve_nqueens_util(board, col + 1, N, solutions) or res
-            board[i][col] = 0
+    for col in range(n):
+        if is_safe(board, row, col):
+            board[row] = col
+            solve_nqueens_util(board, row + 1, n, solutions)
 
-    return res
-
-def solve_nqueens(N):
+def solve_nqueens(n):
     """
-    Solve the N queens problem and print all solutions.
-
-    Args:
-        N (int): The size of the board (N x N).
+    Solve the N-Queens problem for a board of size n x n.
+    
+    Parameters:
+    n (int): The size of the board (n x n).
+    
+    Returns:
+    list: A list of solutions, each solution is a list of [row, col] pairs.
     """
-    board = [[0 for _ in range(N)] for _ in range(N)]
+    board = [-1] * n
     solutions = []
-    solve_nqueens_util(board, 0, N, solutions)
-    for solution in solutions:
-        print(solution)
+    solve_nqueens_util(board, 0, n, solutions)
+    return solutions
 
 def main():
     """
-    Main function to handle command-line arguments and initiate solving.
+    Main function to handle command line arguments and solve the N-Queens problem.
     """
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
 
     try:
-        N = int(sys.argv[1])
+        n = int(sys.argv[1])
     except ValueError:
         print("N must be a number")
         sys.exit(1)
 
-    if N < 4:
+    if n < 4:
         print("N must be at least 4")
         sys.exit(1)
 
-    solve_nqueens(N)
+    solutions = solve_nqueens(n)
+    for solution in solutions:
+        print(solution)
 
 if __name__ == "__main__":
     main()
