@@ -11,7 +11,13 @@ const requestCharacters = async () => {
   await new Promise((resolve) =>
     request(endPoint, (err, res, body) => {
       if (err || res.statusCode !== 200) {
-        console.error("Error: ", err, "| StatusCode: ", res.statusCode);
+        console.error(
+          "Error: ",
+          err,
+          "| StatusCode: ",
+          res ? res.statusCode : "N/A"
+        );
+        resolve();
       } else {
         const data = JSON.parse(body);
         people = data.characters;
@@ -22,22 +28,23 @@ const requestCharacters = async () => {
 };
 
 const requestNames = async () => {
-  if (people.length > 0) {
-    for (const p of people) {
-      await new Promise((resolve) =>
-        request(p, (err, res, body) => {
-          if (err || res.statusCode !== 200) {
-            console.error("Error: ", err, "| StatusCode: ", res.statusCode);
-          } else {
-            const data = JSON.parse(body);
-            names.push(data.name);
-            resolve();
-          }
-        })
-      );
-    }
-  } else {
-    console.error("Error: Got no Characters from the film");
+  for (const p of people) {
+    await new Promise((resolve) =>
+      request(p, (err, res, body) => {
+        if (err || res.statusCode !== 200) {
+          console.error(
+            "Error: ",
+            err,
+            "| StatusCode: ",
+            res ? res.statusCode : "N/A"
+          );
+        } else {
+          const data = JSON.parse(body);
+          names.push(data.name);
+        }
+        resolve();
+      })
+    );
   }
 };
 
@@ -46,11 +53,7 @@ const getCharNames = async () => {
   await requestNames();
 
   for (const n of names) {
-    if (n === names[names.length - 1]) {
-      process.stdout.write(n);
-    } else {
-      process.stdout.write(n + "\n");
-    }
+    console.log(n);
   }
 };
 
